@@ -107,7 +107,7 @@ public class MainBoard extends JFrame {
 
     private ImageIcon pieceImage(Piece crPiece) {
         if(crPiece!=null){
-            if (!crPiece.isWhite()) {
+            if (crPiece.isWhite()) {
                 if (crPiece.getType().equals(PieceType.PAWN)) {
                     return new ImageIcon("ChessImages/WhitePawn.png");
                 }
