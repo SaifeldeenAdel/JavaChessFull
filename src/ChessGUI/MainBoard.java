@@ -7,13 +7,16 @@ import java.awt.*;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.AbstractMap;
 
 public class MainBoard extends JFrame {
     private ChessGame game;
     private JPanel boardPanel;
     private JPanel prevClickedSquare = null;
-    // squareFrom
-    // squareTo
+    private Color[][] tileColors = new Color[8][8];
+    private int[] squareFrom = new int[2];
+    private int[] squareTo = new int[2];
+    private boolean setFrom = false;
 
     public MainBoard() {
         game = new ChessGame();
@@ -24,7 +27,6 @@ public class MainBoard extends JFrame {
 
         // Filling in the board panel then adding it to our frame
         initialiseSquares();
-        //setPieces();
         add(boardPanel, BorderLayout.CENTER);
 
         // Setting the dimensions of our main window.
@@ -44,6 +46,7 @@ public class MainBoard extends JFrame {
                 JPanel square = new JPanel();
                 square.addMouseListener(new SquareMouseListener());
                 square.setBackground((file + rank) % 2 == 0 ? TileColors.LIGHT : TileColors.DARK);
+                tileColors[rank][file] = square.getBackground();
                 boardPanel.add(square);
             }
         }
@@ -56,7 +59,8 @@ public class MainBoard extends JFrame {
             int index = boardPanel.getComponentZOrder(square);
             int rank = index / Constants.BOARD_HEIGHT;
             int file = index % Constants.BOARD_WIDTH;
-            Piece piece = game.getBoard().getSquare(rank, file).getPiece();
+            rank = game.getPlayerTurn() == ChessCore.Color.WHITE ? 7 - rank : rank;
+            file = game.getPlayerTurn() == ChessCore.Color.WHITE ? file : 7 - file;
 
             // Reset color of the previously clicked square
             if (prevClickedSquare != null) {
@@ -64,15 +68,37 @@ public class MainBoard extends JFrame {
                 prevClickedSquare.setBackground((prevColor == TileColors.LIGHT_ACCENT) ? TileColors.LIGHT : TileColors.DARK);
                 prevClickedSquare = null;
             }
+            Piece piece = game.getBoard().getSquare(rank, file).getPiece();
+
+            // Setting the colors of the squares only if theres a piece there
             if (piece != null){
                 prevClickedSquare = square;
-                Color currentColor = square.getBackground();
-                square.setBackground((currentColor == TileColors.LIGHT) ? TileColors.LIGHT_ACCENT: TileColors.DARK_ACCENT);
-                int rankReal = game.getPlayerTurn() == ChessCore.Color.WHITE ? 8 - rank : rank + 1;
-                int fileReal = game.getPlayerTurn() == ChessCore.Color.WHITE ? file + 1 + 96 : 8 - file + 96;
-                System.out.println("Clicked on File: " + (char)fileReal + ", Rank: " + rankReal);
+                square.setBackground((square.getBackground() == TileColors.LIGHT) ? TileColors.LIGHT_ACCENT: TileColors.DARK_ACCENT);
             }
-            System.out.println(game.getPlayerTurn());
+
+            // Setting the squareFrom
+            if(piece != null && !setFrom){
+                squareFrom[0] = file;
+                squareFrom[1] = rank;
+                System.out.println("Setting squareFrom");
+                setFrom = true;
+            } else if (setFrom) {
+                // If a square was selected before this one, check if this will be a valid move, if not, we will set the squareFrom again.
+                squareTo[0] = file;
+                squareTo[1] = rank;
+                if (!game.move(squareFrom[0], squareFrom[1], squareTo[0],squareTo[1], null)){
+                    System.out.println("Setting squareFrom again");
+                    squareFrom[0] = file;
+                    squareFrom[1] = rank;
+                    setFrom = true;
+                } else {
+                    // If it's a valid move, flip the board
+                    flipBoard();
+                    game.display();
+                    setFrom = false;
+                }
+            }
+
         }
     }
 
@@ -83,6 +109,9 @@ public class MainBoard extends JFrame {
 
         for (int i = components.length - 1; i >= 0; i--) {
             boardPanel.add(components[i]); // Add components in reverse order
+//            int rank = i / Constants.BOARD_HEIGHT;
+//            int file = i % Constants.BOARD_WIDTH;
+//            components[i].setBackground(tileColors[rank][file]);
         }
 
         boardPanel.revalidate();
