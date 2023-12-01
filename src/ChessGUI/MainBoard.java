@@ -41,40 +41,52 @@ public class MainBoard extends JFrame {
         // Goes through the 8x8 grid and add JPanels which are our "squares" with alternating colors
         for (int rank = 0; rank < Constants.BOARD_HEIGHT; rank++) {
             for (int file = 0; file < Constants.BOARD_WIDTH; file++) {
-                final int rankFinal = rank;
-                final int fileFinal = file;
                 JPanel square = new JPanel();
-                //TODO
-                // Probably fill the squares with the appropriate image by checking the PieceType in game.getBoard().getSquare(rank,file).getPiece().getType()
-                // And choosing the image based on the PieceType and color?
-
-                // Piece piece = game.getBoard().getSquare(rank,file).getPiece()
-                // getImageFromPiece(Piece piece) piece.isWhite() piece.getType()
-
-                // Adding the clicking event mouse listener
-                square.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        super.mouseClicked(e);
-                        // if no piece
-                        // if piece
-                        if (prevClickedSquare != null) {
-                            // Reset color of the previously clicked square
-                            Color prevColor = prevClickedSquare.getBackground();
-                            prevClickedSquare.setBackground((prevColor == TileColors.LIGHT_ACCENT) ? TileColors.LIGHT : TileColors.DARK);
-                        }
-                        prevClickedSquare = square;
-
-                        Color currentColor = square.getBackground();
-                        square.setBackground((currentColor == TileColors.LIGHT) ? TileColors.LIGHT_ACCENT: TileColors.DARK_ACCENT);
-                        System.out.println("Clicked on File: " + fileFinal + ", Rank: " + rankFinal);
-//                        System.out.println(game.getBoard().getSquare(rankFinal, fileFinal).getPiece().getType());
-                    }
-                });
+                square.addMouseListener(new SquareMouseListener());
                 square.setBackground((file + rank) % 2 == 0 ? TileColors.LIGHT : TileColors.DARK);
                 boardPanel.add(square);
             }
         }
+    }
+
+    private class SquareMouseListener extends MouseAdapter {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            JPanel square = (JPanel) e.getComponent();
+            int index = boardPanel.getComponentZOrder(square);
+            int rank = index / Constants.BOARD_HEIGHT;
+            int file = index % Constants.BOARD_WIDTH;
+            Piece piece = game.getBoard().getSquare(rank, file).getPiece();
+
+            // Reset color of the previously clicked square
+            if (prevClickedSquare != null) {
+                Color prevColor = prevClickedSquare.getBackground();
+                prevClickedSquare.setBackground((prevColor == TileColors.LIGHT_ACCENT) ? TileColors.LIGHT : TileColors.DARK);
+                prevClickedSquare = null;
+            }
+            if (piece != null){
+                prevClickedSquare = square;
+                Color currentColor = square.getBackground();
+                square.setBackground((currentColor == TileColors.LIGHT) ? TileColors.LIGHT_ACCENT: TileColors.DARK_ACCENT);
+                int rankReal = game.getPlayerTurn() == ChessCore.Color.WHITE ? 8 - rank : rank + 1;
+                int fileReal = game.getPlayerTurn() == ChessCore.Color.WHITE ? file + 1 + 96 : 8 - file + 96;
+                System.out.println("Clicked on File: " + (char)fileReal + ", Rank: " + rankReal);
+            }
+            System.out.println(game.getPlayerTurn());
+        }
+    }
+
+    // Flipping board
+    private void flipBoard() {
+        Component[] components = boardPanel.getComponents();
+        boardPanel.removeAll();
+
+        for (int i = components.length - 1; i >= 0; i--) {
+            boardPanel.add(components[i]); // Add components in reverse order
+        }
+
+        boardPanel.revalidate();
+        boardPanel.repaint();
     }
 
     public static void main(String[] args) {

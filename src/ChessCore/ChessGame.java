@@ -32,6 +32,10 @@ public class ChessGame {
         this.gameStatus = gameStatus;
     }
 
+    public Color getPlayerTurn() {
+        return playerTurn;
+    }
+
     public boolean isValidMove(Square squareFrom, Square squareTo){
         // Clones and simulates the legals moves to check whether the king will be in check after or not
         Board clonedBoard = this.board.clone();
