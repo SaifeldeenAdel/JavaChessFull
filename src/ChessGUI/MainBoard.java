@@ -12,6 +12,8 @@ public class MainBoard extends JFrame {
     private ChessGame game;
     private JPanel boardPanel;
     private JPanel prevClickedSquare = null;
+    // squareFrom
+    // squareTo
 
     public MainBoard() {
         game = new ChessGame();
@@ -22,6 +24,7 @@ public class MainBoard extends JFrame {
 
         // Filling in the board panel then adding it to our frame
         initialiseSquares();
+        //setPieces();
         add(boardPanel, BorderLayout.CENTER);
 
         // Setting the dimensions of our main window.
@@ -31,6 +34,7 @@ public class MainBoard extends JFrame {
         this.setVisible(true);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
+    // public void setPieces
 
     public void initialiseSquares(){
         int count = 0;
@@ -44,11 +48,16 @@ public class MainBoard extends JFrame {
                 // Probably fill the squares with the appropriate image by checking the PieceType in game.getBoard().getSquare(rank,file).getPiece().getType()
                 // And choosing the image based on the PieceType and color?
 
+                // Piece piece = game.getBoard().getSquare(rank,file).getPiece()
+                // getImageFromPiece(Piece piece) piece.isWhite() piece.getType()
+
                 // Adding the clicking event mouse listener
                 square.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         super.mouseClicked(e);
+                        // if no piece
+                        // if piece
                         if (prevClickedSquare != null) {
                             // Reset color of the previously clicked square
                             Color prevColor = prevClickedSquare.getBackground();
@@ -60,7 +69,6 @@ public class MainBoard extends JFrame {
                         square.setBackground((currentColor == TileColors.LIGHT) ? TileColors.LIGHT_ACCENT: TileColors.DARK_ACCENT);
                         System.out.println("Clicked on File: " + fileFinal + ", Rank: " + rankFinal);
 //                        System.out.println(game.getBoard().getSquare(rankFinal, fileFinal).getPiece().getType());
-
                     }
                 });
                 square.setBackground((file + rank) % 2 == 0 ? TileColors.LIGHT : TileColors.DARK);
