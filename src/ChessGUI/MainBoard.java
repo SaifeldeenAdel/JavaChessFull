@@ -88,7 +88,6 @@ public class MainBoard extends JFrame {
             //finding the address of each square using the address of the element in the squares array
             int rank = element/Constants.BOARD_HEIGHT;
             int file = element%Constants.BOARD_WIDTH;
-            System.out.println("Rank : "+ rank + "file: "+ file);
             //typecasting each squares array element as Jpanel
             JPanel square = (JPanel) squares[element];
             int width = boardPanel.getWidth()/Constants.BOARD_WIDTH;
