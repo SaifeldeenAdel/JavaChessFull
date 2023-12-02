@@ -78,7 +78,7 @@ public class MainBoard extends JFrame {
             // Reset color of the previously clicked square
             if (prevClickedSquare != null) {
                 Color prevColor = prevClickedSquare.getBackground();
-                prevClickedSquare.setBackground((prevColor == TileColors.LIGHT_ACCENT) ? TileColors.LIGHT : TileColors.DARK);
+                prevClickedSquare.setBackground((prevColor == TileColors.LIGHT_ACCENT || prevColor == TileColors.LIGHT_RED) ? TileColors.LIGHT : TileColors.DARK);
                 prevClickedSquare = null;
             }
             Piece piece = game.getBoard().getSquare(rank, file).getPiece();
@@ -86,7 +86,7 @@ public class MainBoard extends JFrame {
             // Setting the colors of the squares only if theres a piece there
             if (piece != null){
                 prevClickedSquare = square;
-                square.setBackground((square.getBackground() == TileColors.LIGHT) ? TileColors.LIGHT_ACCENT: TileColors.DARK_ACCENT);
+                square.setBackground((square.getBackground() == TileColors.LIGHT || square.getBackground() == TileColors.LIGHT_RED) ? TileColors.LIGHT_ACCENT: TileColors.DARK_ACCENT);
             }
 
             // Setting the squareFrom
@@ -111,6 +111,15 @@ public class MainBoard extends JFrame {
                 }
             }
 
+        }
+    }
+
+    private void resetColors(){
+        Component[] components = boardPanel.getComponents();
+        for (int i = 0; i < components.length; i++) {
+            int rank = i / Constants.BOARD_HEIGHT;
+            int file = i % Constants.BOARD_WIDTH;
+            components[i].setBackground(tileColors[rank][file]);
         }
     }
 
@@ -169,7 +178,10 @@ public class MainBoard extends JFrame {
 
     // Highlighting the king if there is a king in check
     public void highlightKingInCheck(){
-        if(game.getGameStatus()== GameStatus.WHITE_IN_CHECK || game.getGameStatus()== GameStatus.BLACK_IN_CHECK){
+        if(game.getGameStatus()== GameStatus.WHITE_IN_CHECK
+                || game.getGameStatus()== GameStatus.BLACK_IN_CHECK
+                || game.getGameStatus()== GameStatus.WHITE_WON
+                || game.getGameStatus()== GameStatus.BLACK_WON){
             // Getting the king's position relative to the board's orientation
             Component[] squares = boardPanel.getComponents();
             Square king = game.getKingInCheckSquare();
@@ -180,13 +192,9 @@ public class MainBoard extends JFrame {
             // Highlighting the square based on the color square its on
             square.setBackground(square.getBackground() == TileColors.DARK ? TileColors.DARK_RED : TileColors.LIGHT_RED);
             setHighlightedKing(square);
-            System.out.println(highlightedKing.getBackground());
-
         } else if (highlightedKing != null){
-            // Reverting back the highlighted king after the player evades the check
-            System.out.println(("set to") + (highlightedKing.getBackground()));
-            highlightedKing.setBackground(highlightedKing.getBackground() == TileColors.DARK_RED ? TileColors.DARK : TileColors.LIGHT);
-            highlightedKing = null;
+            // Reverting back the highlighted king colors after the player evades the check
+            resetColors();
         }
     }
 
