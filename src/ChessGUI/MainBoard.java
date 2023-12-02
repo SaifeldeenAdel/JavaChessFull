@@ -30,7 +30,7 @@ public class MainBoard extends JFrame {
 
         // Setting the dimensions of our main window.
         this.setTitle("8139 & 8277's Chess");
-        this.setSize(1000,1000);
+        this.setSize(800,800);
         this.setLocation(450,20);
         this.setVisible(true);
         setPieces();
