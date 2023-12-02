@@ -7,7 +7,6 @@ import java.awt.*;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Arrays;
 
 public class MainBoard extends JFrame {
     private ChessGame game;
@@ -109,6 +108,8 @@ public class MainBoard extends JFrame {
 
         for (int i = components.length - 1; i >= 0; i--) {
             boardPanel.add(components[i]); // Add components in reverse order
+            
+//            For resetting the color of the squares, still undecided if I will do it
 //            int rank = i / Constants.BOARD_HEIGHT;
 //            int file = i % Constants.BOARD_WIDTH;
 //            components[i].setBackground(tileColors[rank][file]);
@@ -116,7 +117,6 @@ public class MainBoard extends JFrame {
         boardPanel.revalidate();
         boardPanel.repaint();
     }
-
 
     public void setPieces(){
         Component[] squares = boardPanel.getComponents();
@@ -148,6 +148,13 @@ public class MainBoard extends JFrame {
             square.repaint();
         }
     }
+
+    //TODO
+    // Both methods below will be called after a move is successful (around line 96)
+    // void showGameStatus() - just checks current game status and gives out a message dialog if White Won, Black Won, Stalemate, or Insufficient mats
+    // void showValidMoves(Square square) - pass the square from the board, run the getValidMovesFromSquare then highlights the squares returned.
+    // void highlightKingInCheck()
+    
 
     private ImageIcon pieceImage(Piece crPiece) {
         if(crPiece!=null){
