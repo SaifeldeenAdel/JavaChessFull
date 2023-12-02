@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 public class MainBoard extends JFrame {
     private ChessGame game;
@@ -16,6 +17,7 @@ public class MainBoard extends JFrame {
     private int[] squareFrom = new int[2];
     private int[] squareTo = new int[2];
     private boolean setFrom = false;
+    private JPanel highlightedKing = null;
 
     public MainBoard() {
         game = new ChessGame();
@@ -39,6 +41,15 @@ public class MainBoard extends JFrame {
     }
     // public void setPieces
 
+
+    public JPanel getHighlightedKing() {
+        return highlightedKing;
+    }
+
+    public void setHighlightedKing(JPanel highlightedKing) {
+        this.highlightedKing = highlightedKing;
+    }
+
     public void initialiseSquares(){
         int count = 0;
         // Goes through the 8x8 grid and add JPanels which are our "squares" with alternating colors
@@ -53,6 +64,7 @@ public class MainBoard extends JFrame {
         }
     }
 
+
     private class SquareMouseListener extends MouseAdapter {
         @Override
         public void mouseClicked(MouseEvent e) {
@@ -66,7 +78,7 @@ public class MainBoard extends JFrame {
             // Reset color of the previously clicked square
             if (prevClickedSquare != null) {
                 Color prevColor = prevClickedSquare.getBackground();
-                prevClickedSquare.setBackground((prevColor == TileColors.LIGHT_ACCENT) ? TileColors.LIGHT : TileColors.DARK);
+                prevClickedSquare.setBackground((prevColor == TileColors.LIGHT_ACCENT || prevColor == TileColors.LIGHT_RED) ? TileColors.LIGHT : TileColors.DARK);
                 prevClickedSquare = null;
             }
             Piece piece = game.getBoard().getSquare(rank, file).getPiece();
@@ -74,7 +86,7 @@ public class MainBoard extends JFrame {
             // Setting the colors of the squares only if theres a piece there
             if (piece != null){
                 prevClickedSquare = square;
-                square.setBackground((square.getBackground() == TileColors.LIGHT) ? TileColors.LIGHT_ACCENT: TileColors.DARK_ACCENT);
+                square.setBackground((square.getBackground() == TileColors.LIGHT || square.getBackground() == TileColors.LIGHT_RED) ? TileColors.LIGHT_ACCENT: TileColors.DARK_ACCENT);
             }
 
             // Setting the squareFrom
@@ -94,11 +106,21 @@ public class MainBoard extends JFrame {
                     // If it's a valid move, flip the board
                     showGameStatus();
                     flipBoard();
+                    highlightKingInCheck();
                     setPieces();
                     setFrom = false;
                 }
             }
 
+        }
+    }
+
+    private void resetColors(){
+        Component[] components = boardPanel.getComponents();
+        for (int i = 0; i < components.length; i++) {
+            int rank = i / Constants.BOARD_HEIGHT;
+            int file = i % Constants.BOARD_WIDTH;
+            components[i].setBackground(tileColors[rank][file]);
         }
     }
 
@@ -109,7 +131,6 @@ public class MainBoard extends JFrame {
 
         for (int i = components.length - 1; i >= 0; i--) {
             boardPanel.add(components[i]); // Add components in reverse order
-            
 //            For resetting the color of the squares, still undecided if I will do it
 //            int rank = i / Constants.BOARD_HEIGHT;
 //            int file = i % Constants.BOARD_WIDTH;
@@ -186,6 +207,29 @@ public class MainBoard extends JFrame {
 
     }
 
+    // Highlighting the king if there is a king in check
+    public void highlightKingInCheck(){
+        if(game.getGameStatus()== GameStatus.WHITE_IN_CHECK
+                || game.getGameStatus()== GameStatus.BLACK_IN_CHECK
+                || game.getGameStatus()== GameStatus.WHITE_WON
+                || game.getGameStatus()== GameStatus.BLACK_WON){
+            // Getting the king's position relative to the board's orientation
+            Component[] squares = boardPanel.getComponents();
+            Square king = game.getKingInCheckSquare();
+            int rank = game.getPlayerTurn() == ChessCore.Color.WHITE ? 7 - king.rank : king.rank;
+            int file = game.getPlayerTurn() == ChessCore.Color.WHITE ? king.file : 7 - king.file;
+            JPanel square = (JPanel) squares[rank * 8 + file];
+
+            // Highlighting the square based on the color square its on
+            square.setBackground(square.getBackground() == TileColors.DARK ? TileColors.DARK_RED : TileColors.LIGHT_RED);
+            setHighlightedKing(square);
+        } else if (highlightedKing != null){
+            // Reverting back the highlighted king colors after the player evades the check
+            resetColors();
+        }
+    }
+
+    // Getting the image of the given piece based on its type
     private ImageIcon pieceImage(Piece crPiece) {
         if(crPiece!=null){
             if (crPiece.isWhite()) {
