@@ -118,7 +118,6 @@ public class MainBoard extends JFrame {
         boardPanel.repaint();
     }
 
-
     public void setPieces(){
         Component[] squares = boardPanel.getComponents();
         // Goes through all components (squares) to add image according to piece
@@ -149,6 +148,13 @@ public class MainBoard extends JFrame {
             square.repaint();
         }
     }
+
+    //TODO
+    // Both methods below will be called after a move is successful (around line 96)
+    // void showGameStatus() - just checks current game status and gives out a message dialog if White Won, Black Won, Stalemate, or Insufficient mats
+    // void showValidMoves(Square square) - pass the square from the board, run the getValidMovesFromSquare then highlights the squares returned.
+    // void highlightKingInCheck()
+    
 
     private ImageIcon pieceImage(Piece crPiece) {
         if(crPiece!=null){
