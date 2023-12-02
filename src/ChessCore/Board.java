@@ -20,6 +20,28 @@ public class Board implements Cloneable{
         return squares;
     }
 
+    public Square getWhiteKing(){
+        for(int rank =0;rank<Constants.BOARD_HEIGHT; rank++){
+            for (int file = 0; file < Constants.BOARD_WIDTH; file++) {
+                if (squares[rank][file].getPiece() instanceof King && squares[rank][file].getPiece().isWhite()){
+                    return squares[rank][file];
+                };
+            }
+        }
+        return null;
+    }
+
+    public Square getBlackKing(){
+        for(int rank =0;rank<Constants.BOARD_HEIGHT; rank++){
+            for (int file = 0; file < Constants.BOARD_WIDTH; file++) {
+                if (squares[rank][file].getPiece() instanceof King && !squares[rank][file].getPiece().isWhite()){
+                    return squares[rank][file];
+                };
+            }
+        }
+        return null;
+    }
+
     public void initialisePieces(){
         for(int i = 0; i< Constants.BOARD_WIDTH; i++){
             squares[1][i].setPiece(new Pawn(this, squares[1][i], Color.WHITE));

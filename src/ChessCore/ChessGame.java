@@ -88,7 +88,6 @@ public class ChessGame {
                 Piece piece = board.getSquare(rank, file).getPiece();
                 if (piece != null && piece instanceof King && piece.getColor() == this.playerTurn) {
                     if (((King) piece).isInCheck()) {
-                        setKingInCheckSquare(piece.getPosition());
                         return true;
                     } else {
                         return false;
@@ -182,6 +181,7 @@ public class ChessGame {
                     return true;
                 }
                 if (this.kingIsInCheck(board)){
+                    setKingInCheckSquare(playerTurn == Color.WHITE ? getBoard().getWhiteKing() : getBoard().getBlackKing());
                     if (this.isCheckMate(board)) {
                         // TODO
                         System.out.println((playerTurn == Color.WHITE ? Color.BLACK : Color.WHITE) + " won");
