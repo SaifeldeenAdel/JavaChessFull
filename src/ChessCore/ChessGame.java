@@ -9,6 +9,7 @@ import java.util.Map;
 public class ChessGame {
     private Board board;
     private Map<Square, Square> squares;
+    private Square kingInCheckSquare;
     private Color playerTurn;
     private boolean gameEnded;
     private GameStatus gameStatus;
@@ -30,6 +31,14 @@ public class ChessGame {
 
     public void setGameStatus(GameStatus gameStatus) {
         this.gameStatus = gameStatus;
+    }
+
+    public Square getKingInCheckSquare() {
+        return kingInCheckSquare;
+    }
+
+    public void setKingInCheckSquare(Square kingInCheckSquare) {
+        this.kingInCheckSquare = kingInCheckSquare;
     }
 
     public Color getPlayerTurn() {
@@ -79,6 +88,7 @@ public class ChessGame {
                 Piece piece = board.getSquare(rank, file).getPiece();
                 if (piece != null && piece instanceof King && piece.getColor() == this.playerTurn) {
                     if (((King) piece).isInCheck()) {
+                        setKingInCheckSquare(piece.getPosition());
                         return true;
                     } else {
                         return false;
