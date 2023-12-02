@@ -7,7 +7,6 @@ import java.awt.*;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.AbstractMap;
 
 public class MainBoard extends JFrame {
     private ChessGame game;
@@ -109,6 +108,8 @@ public class MainBoard extends JFrame {
 
         for (int i = components.length - 1; i >= 0; i--) {
             boardPanel.add(components[i]); // Add components in reverse order
+            
+//            For resetting the color of the squares, still undecided if I will do it
 //            int rank = i / Constants.BOARD_HEIGHT;
 //            int file = i % Constants.BOARD_WIDTH;
 //            components[i].setBackground(tileColors[rank][file]);
