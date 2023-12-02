@@ -92,6 +92,7 @@ public class MainBoard extends JFrame {
                     setFrom = true;
                 } else {
                     // If it's a valid move, flip the board
+                    showGameStatus();
                     flipBoard();
                     setPieces();
                     setFrom = false;
@@ -154,7 +155,36 @@ public class MainBoard extends JFrame {
     // void showGameStatus() - just checks current game status and gives out a message dialog if White Won, Black Won, Stalemate, or Insufficient mats
     // void showValidMoves(Square square) - pass the square from the board, run the getValidMovesFromSquare then highlights the squares returned.
     // void highlightKingInCheck()
-    
+
+    private void showGameStatus(){
+        if(game.getGameStatus() == GameStatus.STALEMATE || game.getGameStatus() == GameStatus.INSUFFICIENT_MATERIAL||game.getGameStatus() == GameStatus.BLACK_WON || game.getGameStatus() == GameStatus.WHITE_WON){
+            JDialog dialog = new JDialog();
+            dialog.setTitle("Game status");
+            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+            JLabel label = new JLabel();
+            label.setFont(new Font("Times New Roman", Font.BOLD, 20));
+            label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+            if(game.getGameStatus() == GameStatus.STALEMATE){
+                label.setText("STALEMATE");
+            }
+            else if(game.getGameStatus()== GameStatus.INSUFFICIENT_MATERIAL){
+                label.setText("INSUFFICIENT MATERIAL");
+            }
+            else if(game.getGameStatus()==GameStatus.BLACK_WON){
+                label.setText("BLACK WON");
+            }
+            else if(game.getGameStatus()== GameStatus.WHITE_WON){
+                label.setText("WHITE WON");
+            }
+            // add game ended dialogue?
+            dialog.getContentPane().add(label);
+            dialog.setSize(400,200);
+            dialog.setVisible(true);
+
+        }
+
+    }
 
     private ImageIcon pieceImage(Piece crPiece) {
         if(crPiece!=null){
