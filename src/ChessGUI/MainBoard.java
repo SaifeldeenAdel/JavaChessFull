@@ -102,6 +102,7 @@ public class MainBoard extends JFrame {
                     squareFrom[0] = file;
                     squareFrom[1] = rank;
                     setFrom = true;
+                    //showValidMoves(squareFrom);
                 } else {
                     // If it's a valid move, flip the board
                     showGameStatus();
@@ -205,6 +206,10 @@ public class MainBoard extends JFrame {
 
         }
 
+    }
+
+    public void showValidMoves(int [] squareFrom){
+        //game.getAllValidMovesFromSquare(game.getBoard().getSquare(squareFrom[0], squareFrom[1]));
     }
 
     // Highlighting the king if there is a king in check

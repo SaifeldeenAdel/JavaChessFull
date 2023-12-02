@@ -11,4 +11,5 @@ public class TileColors {
     public static final Color LIGHT_HIGHLIGHT = new Color(245,246,113);
     public static final Color DARK_RED = new Color(200, 61, 61);
     public static final Color LIGHT_RED = new Color(255, 123, 123);
+    public static final Color GREY_HIGHLIGHT = new Color (126, 126, 126);
 }
