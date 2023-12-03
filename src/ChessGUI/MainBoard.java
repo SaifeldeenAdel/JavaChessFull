@@ -10,7 +10,7 @@ import java.awt.event.MouseEvent;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class MainBoard extends JFrame {
+public class MainBoard extends JFrame implements Node {
     private ChessGame game;
     private JPanel boardPanel;
     private JPanel prevClickedSquare = null;
@@ -19,6 +19,8 @@ public class MainBoard extends JFrame {
     private int[] squareTo = new int[2];
     private boolean setFrom = false;
     private JPanel highlightedKing = null;
+    private PieceType promotionPiece;
+
 
     public MainBoard() {
         game = new ChessGame();
@@ -51,6 +53,14 @@ public class MainBoard extends JFrame {
         this.highlightedKing = highlightedKing;
     }
 
+    public void setPromotionPiece(PieceType promotionPiece) {
+        this.promotionPiece = promotionPiece;
+    }
+
+    public PieceType getPromotionPiece() {
+        return promotionPiece;
+    }
+
     public void initialiseSquares(){
         int count = 0;
         // Goes through the 8x8 grid and add JPanels which are our "squares" with alternating colors
@@ -64,6 +74,17 @@ public class MainBoard extends JFrame {
             }
         }
     }
+
+    @Override
+    public void setParentNode(Node n) {
+
+    }
+
+    @Override
+    public Node getParentNode() {
+        return null;
+    }
+
 
     private class SquareMouseListener extends MouseAdapter {
 
@@ -96,6 +117,10 @@ public class MainBoard extends JFrame {
                 // If a square was selected before this one, check if this will be a valid move, if not, we will set the squareFrom again.
                 squareTo[0] = file;
                 squareTo[1] = rank;
+                // if game.validPromotionMove(squareFrom[0], squareFrom[1], squareTo[0],squareTo[1]) - squareFrom has pawn, isPromoting()
+                // open dialog window, setParent(this), inside dialog, getParent().setPromotionPiece(buttonValue)
+                // action listeners, parent
+
                 if (!game.move(squareFrom[0], squareFrom[1], squareTo[0],squareTo[1], null)){
                     squareFrom[0] = file;
                     squareFrom[1] = rank;
@@ -114,6 +139,8 @@ public class MainBoard extends JFrame {
         }
 
     }
+    //TODO
+    //
 
     public void showValidMoves(Square square){
         ArrayList<Square> validMoves = game.getAllValidMovesFromSquare(square);
