@@ -160,23 +160,22 @@ public class MainBoard extends JFrame {
             // Getting piece on board game
             Piece crPiece = game.getBoard().getSquare(rank, file).getPiece();
             // Convert image to type Image to resize image according to square size in grid and set image to square
-            Image resizedImage = pieceImage(crPiece).getImage().getScaledInstance(width,height,Image.SCALE_SMOOTH);
-            ImageIcon cImage = new ImageIcon(resizedImage);
-            JLabel finalImage = new JLabel(cImage);
-            finalImage.setHorizontalAlignment(JLabel.CENTER);
-            finalImage.setVerticalAlignment(JLabel.CENTER);
-            square.add(finalImage);
-
+            if (crPiece != null){
+                Image resizedImage = pieceImage(crPiece).getImage().getScaledInstance(width,height,Image.SCALE_SMOOTH);
+                ImageIcon cImage = new ImageIcon(resizedImage);
+                JLabel finalImage = new JLabel(cImage);
+                finalImage.setHorizontalAlignment(JLabel.CENTER);
+                finalImage.setVerticalAlignment(JLabel.CENTER);
+                square.add(finalImage);
+            }
             square.revalidate();
             square.repaint();
         }
     }
 
     //TODO
-    // Both methods below will be called after a move is successful (around line 96)
-    // void showGameStatus() - just checks current game status and gives out a message dialog if White Won, Black Won, Stalemate, or Insufficient mats
+    // All methods below will be called after a move is successful (around line 96)
     // void showValidMoves(Square square) - pass the square from the board, run the getValidMovesFromSquare then highlights the squares returned.
-    // void highlightKingInCheck()
 
     private void showGameStatus(){
         if(game.getGameStatus() == GameStatus.STALEMATE || game.getGameStatus() == GameStatus.INSUFFICIENT_MATERIAL||game.getGameStatus() == GameStatus.BLACK_WON || game.getGameStatus() == GameStatus.WHITE_WON){
@@ -202,14 +201,15 @@ public class MainBoard extends JFrame {
             // add game ended dialogue?
             dialog.getContentPane().add(label);
             dialog.setSize(400,200);
+            dialog.setLocationRelativeTo(this);
             dialog.setVisible(true);
 
         }
 
     }
 
-    public void showValidMoves(int [] squareFrom){
-        //game.getAllValidMovesFromSquare(game.getBoard().getSquare(squareFrom[0], squareFrom[1]));
+    public void showValidMoves(Square square){
+        //game.getAllValidMovesFromSquare(game.getBoard().getSquare(square.rank, square.file));
     }
 
     // Highlighting the king if there is a king in check
@@ -236,49 +236,47 @@ public class MainBoard extends JFrame {
 
     // Getting the image of the given piece based on its type
     private ImageIcon pieceImage(Piece crPiece) {
-        if(crPiece!=null){
-            if (crPiece.isWhite()) {
-                if (crPiece.getType().equals(PieceType.PAWN)) {
-                    return new ImageIcon("ChessImages/WhitePawn.png");
-                }
-                if(crPiece.getType().equals(PieceType.BISHOP)){
-                    return new ImageIcon("ChessImages/WhiteBishop.png");
-                }
-                if(crPiece.getType().equals(PieceType.ROOK)){
-                    return new ImageIcon("ChessImages/WhiteRook.png");
-                }
-                if(crPiece.getType().equals(PieceType.KNIGHT)){
-                    return new ImageIcon("ChessImages/WhiteKnight.png");
-                }
-                if(crPiece.getType().equals(PieceType.QUEEN)){
-                    return new ImageIcon("ChessImages/WhiteQueen.png");
-                }
-                if(crPiece.getType().equals(PieceType.KING)){
-                    return new ImageIcon("ChessImages/WhiteKing.png");
-                }
+        if (crPiece.isWhite()) {
+            if (crPiece.getType().equals(PieceType.PAWN)) {
+                return new ImageIcon("ChessImages/WhitePawn.png");
+            }
+            if(crPiece.getType().equals(PieceType.BISHOP)){
+                return new ImageIcon("ChessImages/WhiteBishop.png");
+            }
+            if(crPiece.getType().equals(PieceType.ROOK)){
+                return new ImageIcon("ChessImages/WhiteRook.png");
+            }
+            if(crPiece.getType().equals(PieceType.KNIGHT)){
+                return new ImageIcon("ChessImages/WhiteKnight.png");
+            }
+            if(crPiece.getType().equals(PieceType.QUEEN)){
+                return new ImageIcon("ChessImages/WhiteQueen.png");
+            }
+            if(crPiece.getType().equals(PieceType.KING)){
+                return new ImageIcon("ChessImages/WhiteKing.png");
+            }
 
-            } else {
-                if (crPiece.getType().equals(PieceType.PAWN)) {
-                    return new ImageIcon("ChessImages/BlackPawn.png");
-                }
-                if(crPiece.getType().equals(PieceType.ROOK)){
-                    return new ImageIcon("ChessImages/BlackRook.png");
-                }
-                if(crPiece.getType().equals(PieceType.KNIGHT)){
-                    return new ImageIcon("ChessImages/BlackKnight.png");
-                }
-                if(crPiece.getType().equals(PieceType.BISHOP)){
-                        return new ImageIcon("ChessImages/BlackBishop.png");
-                }
-                if(crPiece.getType().equals(PieceType.QUEEN)){
-                return new ImageIcon("ChessImages/BlackQueen.png");
-                }
-                if(crPiece.getType().equals(PieceType.KING)){
-                return new ImageIcon("ChessImages/BlackKing.png");
-                }
+        } else {
+            if (crPiece.getType().equals(PieceType.PAWN)) {
+                return new ImageIcon("ChessImages/BlackPawn.png");
+            }
+            if(crPiece.getType().equals(PieceType.ROOK)){
+                return new ImageIcon("ChessImages/BlackRook.png");
+            }
+            if(crPiece.getType().equals(PieceType.KNIGHT)){
+                return new ImageIcon("ChessImages/BlackKnight.png");
+            }
+            if(crPiece.getType().equals(PieceType.BISHOP)){
+                    return new ImageIcon("ChessImages/BlackBishop.png");
+            }
+            if(crPiece.getType().equals(PieceType.QUEEN)){
+            return new ImageIcon("ChessImages/BlackQueen.png");
+            }
+            if(crPiece.getType().equals(PieceType.KING)){
+            return new ImageIcon("ChessImages/BlackKing.png");
             }
         }
-        return new ImageIcon("ChessImages/default.png");
+        return null;
     }
 
     public static void main(String[] args) {
