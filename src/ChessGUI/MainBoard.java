@@ -1,30 +1,25 @@
 package ChessGUI;
 
 import ChessCore.*;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class MainBoard extends JFrame implements Node {
+public class MainBoard extends JFrame {
     private ChessGame game;
     private JPanel boardPanel;
-    private JPanel prevClickedSquare = null;
     private Color[][] tileColors = new Color[8][8];
     private int[] squareFrom = new int[2];
     private int[] squareTo = new int[2];
     private boolean setFrom = false;
     private JPanel highlightedKing = null;
     private PieceType promotionPiece;
-    private PromotionWindow promotionWindow;
 
     public MainBoard() {
         game = new ChessGame();
-        promotionWindow = null;
         // Creating the main panel of the whole board and setting an 8x8 grid inside it
         boardPanel = new JPanel();
         boardPanel.setLayout(new GridLayout(Constants.BOARD_HEIGHT, Constants.BOARD_WIDTH));
@@ -42,8 +37,6 @@ public class MainBoard extends JFrame implements Node {
         this.setVisible(true);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
-
-    // public void setPieces
 
     public JPanel getHighlightedKing() {
         return highlightedKing;
@@ -75,17 +68,6 @@ public class MainBoard extends JFrame implements Node {
         }
     }
 
-    @Override
-    public void setParentNode(Node n) {
-
-    }
-
-    @Override
-    public Node getParentNode() {
-        return null;
-    }
-
-
     private class SquareMouseListener extends MouseAdapter {
 
         @Override
@@ -105,7 +87,6 @@ public class MainBoard extends JFrame implements Node {
 
             // Setting the colors of the squares only if theres a piece there
             if (piece != null){
-                prevClickedSquare = squarePanel;
                 squarePanel.setBackground((squarePanel.getBackground() == TileColors.LIGHT || squarePanel.getBackground() == TileColors.LIGHT_RED || squarePanel.getBackground() == TileColors.LIGHT_ACCENT) ? TileColors.LIGHT_ACCENT: TileColors.DARK_ACCENT);
                 showValidMoves(square);
             }
@@ -125,9 +106,7 @@ public class MainBoard extends JFrame implements Node {
                         squareFrom[0] = file;
                         squareFrom[1] = rank;
                         setFrom = true;
-                        //showValidMoves(squareFrom);
                     }else{
-                            // If it's a valid move, flip the board
                             showGameStatus();
                             flipBoard();
                             highlightKingInCheck();
@@ -141,17 +120,20 @@ public class MainBoard extends JFrame implements Node {
                             0, 3, null, options, options[0]);
 
                     if (promotingTo == 0){
-                        System.out.println("queen");
                         game.move(squareFrom[0], squareFrom[1], squareTo[0],squareTo[1], PieceType.QUEEN);
+                    } else if (promotingTo == 1){
+                        game.move(squareFrom[0], squareFrom[1], squareTo[0],squareTo[1], PieceType.KNIGHT);
+                    } else if (promotingTo == 2){
+                        game.move(squareFrom[0], squareFrom[1], squareTo[0],squareTo[1], PieceType.ROOK);
+                    } else if (promotingTo == 3){
+                        game.move(squareFrom[0], squareFrom[1], squareTo[0],squareTo[1], PieceType.BISHOP);
                     }
-                    // TODO --> Rest of the choices, 1,2,3
 
                     showGameStatus();
                     flipBoard();
                     highlightKingInCheck();
                     setPieces();
                     setFrom = false;
-                    //run same methods as prev else run move inside if and using string (promoting)
                 }
             }
 
