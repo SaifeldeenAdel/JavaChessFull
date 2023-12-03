@@ -78,7 +78,7 @@ public class MainBoard extends JFrame {
             // Reset color of the previously clicked square
             if (prevClickedSquare != null) {
                 Color prevColor = prevClickedSquare.getBackground();
-                prevClickedSquare.setBackground((prevColor == TileColors.LIGHT_ACCENT || prevColor == TileColors.LIGHT_RED) ? TileColors.LIGHT : TileColors.DARK);
+                prevClickedSquare.setBackground((prevColor == TileColors.LIGHT_ACCENT || prevColor == TileColors.LIGHT_RED || prevColor == TileColors.LIGHT) ? TileColors.LIGHT : TileColors.DARK);
                 prevClickedSquare = null;
             }
             Piece piece = game.getBoard().getSquare(rank, file).getPiece();
@@ -86,7 +86,7 @@ public class MainBoard extends JFrame {
             // Setting the colors of the squares only if theres a piece there
             if (piece != null){
                 prevClickedSquare = square;
-                square.setBackground((square.getBackground() == TileColors.LIGHT || square.getBackground() == TileColors.LIGHT_RED) ? TileColors.LIGHT_ACCENT: TileColors.DARK_ACCENT);
+                square.setBackground((square.getBackground() == TileColors.LIGHT || square.getBackground() == TileColors.LIGHT_RED || square.getBackground() == TileColors.LIGHT_ACCENT) ? TileColors.LIGHT_ACCENT: TileColors.DARK_ACCENT);
             }
 
             // Setting the squareFrom
