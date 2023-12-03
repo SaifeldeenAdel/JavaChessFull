@@ -91,6 +91,8 @@ public class MainBoard extends JFrame implements Node {
         @Override
         public void mouseClicked(MouseEvent e) {
             resetColors();
+            highlightKingInCheck();
+
             JPanel squarePanel = (JPanel) e.getComponent();
             int index = boardPanel.getComponentZOrder(squarePanel);
             int rank = index / Constants.BOARD_HEIGHT;
@@ -118,9 +120,6 @@ public class MainBoard extends JFrame implements Node {
                 squareTo[0] = file;
                 squareTo[1] = rank;
 
-                // if game.validPromotionMove(squareFrom[0], squareFrom[1], squareTo[0],squareTo[1]) - squareFrom has pawn, isPromoting()
-                // open dialog window, setParent(this), inside dialog, getParent().setPromotionPiece(buttonValue)
-                // action listeners, parent
                 if(!game.getBoard().isPromotionMove(game.getBoard().getSquare(squareFrom[1],squareFrom[0]),game.getBoard().getSquare(squareTo[1],squareTo[0]))){
                     if (!game.move(squareFrom[0], squareFrom[1], squareTo[0],squareTo[1], null)) {
                         squareFrom[0] = file;
@@ -137,8 +136,21 @@ public class MainBoard extends JFrame implements Node {
                     }
                 }
                 else {
-                    String promoting = JOptionPane.showInputDialog("Promotion?", "");
-                    System.out.println(promoting);
+                    String[] options = { "Queen", "Knight", "Rook", "Bishop" };
+                    int promotingTo = JOptionPane.showOptionDialog(null, "Promote To:", "Promote To",
+                            0, 3, null, options, options[0]);
+
+                    if (promotingTo == 0){
+                        System.out.println("queen");
+                        game.move(squareFrom[0], squareFrom[1], squareTo[0],squareTo[1], PieceType.QUEEN);
+                    }
+                    // TODO --> Rest of the choices, 1,2,3
+
+                    showGameStatus();
+                    flipBoard();
+                    highlightKingInCheck();
+                    setPieces();
+                    setFrom = false;
                     //run same methods as prev else run move inside if and using string (promoting)
                 }
             }
