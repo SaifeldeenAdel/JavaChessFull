@@ -32,7 +32,7 @@ public class MainBoard extends JFrame {
 
         // Setting the dimensions of our main window.
         this.setTitle("8139 & 8277's Chess");
-        this.setSize(1000,1000);
+        this.setSize(800,800);
         this.setLocation(450,20);
         this.setVisible(true);
         setPieces();
@@ -102,8 +102,10 @@ public class MainBoard extends JFrame {
                     squareFrom[0] = file;
                     squareFrom[1] = rank;
                     setFrom = true;
+                    //showValidMoves(squareFrom);
                 } else {
                     // If it's a valid move, flip the board
+                    showGameStatus();
                     flipBoard();
                     highlightKingInCheck();
                     setPieces();
@@ -175,6 +177,40 @@ public class MainBoard extends JFrame {
     // void showGameStatus() - just checks current game status and gives out a message dialog if White Won, Black Won, Stalemate, or Insufficient mats
     // void showValidMoves(Square square) - pass the square from the board, run the getValidMovesFromSquare then highlights the squares returned.
     // void highlightKingInCheck()
+
+    private void showGameStatus(){
+        if(game.getGameStatus() == GameStatus.STALEMATE || game.getGameStatus() == GameStatus.INSUFFICIENT_MATERIAL||game.getGameStatus() == GameStatus.BLACK_WON || game.getGameStatus() == GameStatus.WHITE_WON){
+            JDialog dialog = new JDialog();
+            dialog.setTitle("Game status");
+            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+            JLabel label = new JLabel();
+            label.setFont(new Font("Times New Roman", Font.BOLD, 20));
+            label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+            if(game.getGameStatus() == GameStatus.STALEMATE){
+                label.setText("STALEMATE");
+            }
+            else if(game.getGameStatus()== GameStatus.INSUFFICIENT_MATERIAL){
+                label.setText("INSUFFICIENT MATERIAL");
+            }
+            else if(game.getGameStatus()==GameStatus.BLACK_WON){
+                label.setText("BLACK WON");
+            }
+            else if(game.getGameStatus()== GameStatus.WHITE_WON){
+                label.setText("WHITE WON");
+            }
+            // add game ended dialogue?
+            dialog.getContentPane().add(label);
+            dialog.setSize(400,200);
+            dialog.setVisible(true);
+
+        }
+
+    }
+
+    public void showValidMoves(int [] squareFrom){
+        //game.getAllValidMovesFromSquare(game.getBoard().getSquare(squareFrom[0], squareFrom[1]));
+    }
 
     // Highlighting the king if there is a king in check
     public void highlightKingInCheck(){
