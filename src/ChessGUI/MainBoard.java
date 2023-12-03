@@ -39,7 +39,6 @@ public class MainBoard extends JFrame implements Node {
         this.setLocation(550,100);
         this.setVisible(true);
         setPieces();
-        this.setVisible(true);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
