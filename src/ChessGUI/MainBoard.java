@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class MainBoard extends JFrame {
@@ -33,14 +34,14 @@ public class MainBoard extends JFrame {
         // Setting the dimensions of our main window.
         this.setTitle("8139 & 8277's Chess");
         this.setSize(800,800);
-        this.setLocation(450,20);
+        this.setLocation(550,100);
         this.setVisible(true);
         setPieces();
         this.setVisible(true);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
-    // public void setPieces
 
+    // public void setPieces
 
     public JPanel getHighlightedKing() {
         return highlightedKing;
@@ -64,29 +65,26 @@ public class MainBoard extends JFrame {
         }
     }
 
-
     private class SquareMouseListener extends MouseAdapter {
+
         @Override
         public void mouseClicked(MouseEvent e) {
-            JPanel square = (JPanel) e.getComponent();
-            int index = boardPanel.getComponentZOrder(square);
+            resetColors();
+            JPanel squarePanel = (JPanel) e.getComponent();
+            int index = boardPanel.getComponentZOrder(squarePanel);
             int rank = index / Constants.BOARD_HEIGHT;
             int file = index % Constants.BOARD_WIDTH;
             rank = game.getPlayerTurn() == ChessCore.Color.WHITE ? 7 - rank : rank;
             file = game.getPlayerTurn() == ChessCore.Color.WHITE ? file : 7 - file;
 
-            // Reset color of the previously clicked square
-            if (prevClickedSquare != null) {
-                Color prevColor = prevClickedSquare.getBackground();
-                prevClickedSquare.setBackground((prevColor == TileColors.LIGHT_ACCENT || prevColor == TileColors.LIGHT_RED || prevColor == TileColors.LIGHT) ? TileColors.LIGHT : TileColors.DARK);
-                prevClickedSquare = null;
-            }
-            Piece piece = game.getBoard().getSquare(rank, file).getPiece();
+            Square square = game.getBoard().getSquare(rank,file);
+            Piece piece = square.getPiece();
 
             // Setting the colors of the squares only if theres a piece there
             if (piece != null){
-                prevClickedSquare = square;
-                square.setBackground((square.getBackground() == TileColors.LIGHT || square.getBackground() == TileColors.LIGHT_RED || square.getBackground() == TileColors.LIGHT_ACCENT) ? TileColors.LIGHT_ACCENT: TileColors.DARK_ACCENT);
+                prevClickedSquare = squarePanel;
+                squarePanel.setBackground((squarePanel.getBackground() == TileColors.LIGHT || squarePanel.getBackground() == TileColors.LIGHT_RED || squarePanel.getBackground() == TileColors.LIGHT_ACCENT) ? TileColors.LIGHT_ACCENT: TileColors.DARK_ACCENT);
+                showValidMoves(square);
             }
 
             // Setting the squareFrom
@@ -114,6 +112,24 @@ public class MainBoard extends JFrame {
             }
 
         }
+
+    }
+
+    public void showValidMoves(Square square){
+        ArrayList<Square> validMoves = game.getAllValidMovesFromSquare(square);
+        Component[] components = boardPanel.getComponents();
+        // Goes through all valid moves and finds tje component
+        for (Square validMove: validMoves){
+            for (int i = 0; i < components.length; i++) {
+                int rank = i / Constants.BOARD_HEIGHT;
+                int file = i % Constants.BOARD_WIDTH;
+                rank = game.getPlayerTurn() == ChessCore.Color.WHITE ? 7 - rank : rank;
+                file = game.getPlayerTurn() == ChessCore.Color.WHITE ? file : 7 - file;
+                if(rank == validMove.rank && file == validMove.file){
+                    components[i].setBackground(components[i].getBackground() == TileColors.LIGHT ? TileColors.LIGHT_HIGHLIGHT : TileColors.DARK_HIGHLIGHT);
+                }
+            }
+        }
     }
 
     private void resetColors(){
@@ -125,17 +141,11 @@ public class MainBoard extends JFrame {
         }
     }
 
-    // Flipping board
     private void flipBoard() {
         Component[] components = boardPanel.getComponents();
         boardPanel.removeAll();
-
         for (int i = components.length - 1; i >= 0; i--) {
             boardPanel.add(components[i]); // Add components in reverse order
-//            For resetting the color of the squares, still undecided if I will do it
-//            int rank = i / Constants.BOARD_HEIGHT;
-//            int file = i % Constants.BOARD_WIDTH;
-//            components[i].setBackground(tileColors[rank][file]);
         }
         boardPanel.revalidate();
         boardPanel.repaint();
@@ -172,10 +182,8 @@ public class MainBoard extends JFrame {
             square.repaint();
         }
     }
-
     //TODO
     // All methods below will be called after a move is successful (around line 96)
-    // void showValidMoves(Square square) - pass the square from the board, run the getValidMovesFromSquare then highlights the squares returned.
 
     private void showGameStatus(){
         if(game.getGameStatus() == GameStatus.STALEMATE || game.getGameStatus() == GameStatus.INSUFFICIENT_MATERIAL||game.getGameStatus() == GameStatus.BLACK_WON || game.getGameStatus() == GameStatus.WHITE_WON){
@@ -184,7 +192,7 @@ public class MainBoard extends JFrame {
             dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
             JLabel label = new JLabel();
-            label.setFont(new Font("Times New Roman", Font.BOLD, 20));
+            label.setFont(new Font("Times New Roman", Font.BOLD, 25));
             label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
             if(game.getGameStatus() == GameStatus.STALEMATE){
                 label.setText("STALEMATE");
@@ -200,16 +208,12 @@ public class MainBoard extends JFrame {
             }
             // add game ended dialogue?
             dialog.getContentPane().add(label);
-            dialog.setSize(400,200);
+            dialog.setSize(400,150);
             dialog.setLocationRelativeTo(this);
             dialog.setVisible(true);
 
         }
 
-    }
-
-    public void showValidMoves(Square square){
-        //game.getAllValidMovesFromSquare(game.getBoard().getSquare(square.rank, square.file));
     }
 
     // Highlighting the king if there is a king in check
