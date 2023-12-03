@@ -187,7 +187,12 @@ public class Board implements Cloneable{
     public boolean isLongCastleMove(Square squareFrom, Square squareTo){
         return squareFrom.file - squareTo.file > 1;
     }
-
+    public boolean isPromotionMove(Square squareFrom, Square squareTo){
+        if (squareFrom.getPiece() instanceof Pawn && ((Pawn)squareFrom.getPiece()).isPromoting(squareFrom,squareTo)){
+            return true;
+        }
+        return false;
+    }
     public void setLastMove(Square squareFrom, Square squareTo) {
         this.lastMove = new ArrayList<>();
         this.lastMove.add(squareFrom);

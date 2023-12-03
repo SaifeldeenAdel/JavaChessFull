@@ -20,11 +20,11 @@ public class MainBoard extends JFrame implements Node {
     private boolean setFrom = false;
     private JPanel highlightedKing = null;
     private PieceType promotionPiece;
-
+    private PromotionWindow promotionWindow;
 
     public MainBoard() {
         game = new ChessGame();
-
+        promotionWindow = null;
         // Creating the main panel of the whole board and setting an 8x8 grid inside it
         boardPanel = new JPanel();
         boardPanel.setLayout(new GridLayout(Constants.BOARD_HEIGHT, Constants.BOARD_WIDTH));
@@ -117,31 +117,35 @@ public class MainBoard extends JFrame implements Node {
                 // If a square was selected before this one, check if this will be a valid move, if not, we will set the squareFrom again.
                 squareTo[0] = file;
                 squareTo[1] = rank;
+
                 // if game.validPromotionMove(squareFrom[0], squareFrom[1], squareTo[0],squareTo[1]) - squareFrom has pawn, isPromoting()
                 // open dialog window, setParent(this), inside dialog, getParent().setPromotionPiece(buttonValue)
                 // action listeners, parent
-
-                if (!game.move(squareFrom[0], squareFrom[1], squareTo[0],squareTo[1], null)){
-                    squareFrom[0] = file;
-                    squareFrom[1] = rank;
-                    setFrom = true;
-                    //showValidMoves(squareFrom);
-                } else {
-                    // If it's a valid move, flip the board
-                    showGameStatus();
-                    flipBoard();
-                    highlightKingInCheck();
-                    setPieces();
-                    setFrom = false;
+                if(!game.getBoard().isPromotionMove(game.getBoard().getSquare(squareFrom[1],squareFrom[0]),game.getBoard().getSquare(squareTo[1],squareTo[0]))){
+                    if (!game.move(squareFrom[0], squareFrom[1], squareTo[0],squareTo[1], null)) {
+                        squareFrom[0] = file;
+                        squareFrom[1] = rank;
+                        setFrom = true;
+                        //showValidMoves(squareFrom);
+                    }else{
+                            // If it's a valid move, flip the board
+                            showGameStatus();
+                            flipBoard();
+                            highlightKingInCheck();
+                            setPieces();
+                            setFrom = false;
+                    }
+                }
+                else {
+                    String promoting = JOptionPane.showInputDialog("Promotion?", "");
+                    System.out.println(promoting);
+                    //run same methods as prev else run move inside if and using string (promoting)
                 }
             }
 
         }
 
     }
-    //TODO
-    //
-
     public void showValidMoves(Square square){
         ArrayList<Square> validMoves = game.getAllValidMovesFromSquare(square);
         Component[] components = boardPanel.getComponents();
